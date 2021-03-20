@@ -8,10 +8,10 @@ from pydantic import ValidationError
 from schema_validator.models.log_model import LogModel
 
 
-def schema_validator(line: str, error_log: str = None):
-    line_dict = json.loads(line)
+def schema_validator(line: str, error_log: str = None) -> dict:
+    line_dict: dict = json.loads(line)
 
-    status = "SUCCESS"
+    status: str = "SUCCESS"
 
     try:
         LogModel(**line_dict)
@@ -32,15 +32,15 @@ def schema_validator(line: str, error_log: str = None):
     }
 
 
-def schema_validator_validate_file(filename: str, error_log: str = None):
-    report = defaultdict(lambda: defaultdict(int))
+def schema_validator_validate_file(filename: str, error_log: str = None) -> dict:
+    report: dict = defaultdict(lambda: defaultdict(int))
 
-    fails = 0
-    success = 0
+    fails: int = 0
+    success: int = 0
 
     with open(filename) as stream:
         for line in stream:
-            result = schema_validator(line, error_log=error_log)
+            result: dict = schema_validator(line, error_log=error_log)
 
             report[result["date"]]["name of event"] = result["event"]
             report[result["date"]]["count of events"] += 1

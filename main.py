@@ -1,11 +1,13 @@
 import os
 
 from schema_validator.models.log_model import LogModel
-from schema_validator.schema_validator import (schema_validator,
-                                               schema_validator_validate_file)
+from schema_validator.schema_validator import (
+    schema_validator,
+    schema_validator_validate_file,
+)
 
 
-def main(filename: str, show_model_schema: bool = False, error_log_file: str = None):
+def main(filename: str, show_model_schema: bool = False, error_log_file: str = None) -> None:
     if show_model_schema:
         model_schema = LogModel.model_schema()
         print(model_schema)
@@ -14,7 +16,7 @@ def main(filename: str, show_model_schema: bool = False, error_log_file: str = N
         if os.path.exists(error_log_file):
             raise Exception(
                 "File already exists, please delete %s first to continue..."
-                % error_log_filels
+                % error_log_file
             )
 
     schema_validator_validate_file(filename, error_log=error_log_file)

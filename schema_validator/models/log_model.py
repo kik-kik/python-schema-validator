@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from pydantic import BaseModel, json, validator
@@ -12,20 +13,20 @@ class LogModel(BaseModel):
     context_device_manufacturer: str
     context_device_model: str
     context_device_type: str
-    context_library_name: str = None
-    context_library_version: str = None
+    context_library_name: str = None  # type: ignore
+    context_library_version: str = None  # type: ignore
     context_locale: str
     context_network_wifi: bool
     context_os_name: str
-    context_timezone: str = None
+    context_timezone: str = None  # type: ignore
     event: str
     event_text: str
     original_timestamp: str
     sent_at: str
     timestamp: str
-    user_id: int = None
+    user_id: int = None  # type: ignore
     context_network_carrier: str
-    context_device_token: str = None
+    context_device_token: str = None  # type: ignore
     context_traits_taxfix_language: str
 
     @validator("received_at", "original_timestamp", "sent_at", "timestamp")
@@ -36,10 +37,11 @@ class LogModel(BaseModel):
 
         try:
             datetime.strptime(timestamp, timestamp_format)
-        except ValueError:
-            logging.debug(e.json())
+        except ValueError as e:
+            logging.debug(e)
             # raise ValueError(f"Incorrect data format, should be '{timestamp_format}'")  # perhaps this should be logged rather than raise exception
-        return timestamp
+            return False
+        return True
 
     @staticmethod
     def model_schema():
