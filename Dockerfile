@@ -9,6 +9,6 @@ RUN python -m pip install --no-cache-dir --upgrade pip==${PIP_ENV_VERSION} \
 
 COPY pyproject.toml .
 RUN poetry install
+RUN poetry run pip install black
 
 ENTRYPOINT [ "poetry", "run", "python", "main.py" ]
-# ENTRYPOINT [ "poetry", "run", "pytest" ]

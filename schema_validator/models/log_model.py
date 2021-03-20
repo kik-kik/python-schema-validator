@@ -1,17 +1,11 @@
 from datetime import datetime
 
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel, validator, json
 
 
-true = True
-false = False
-null = None
-
-
-@dataclass
-class Log(BaseModel):
+class LogModel(BaseModel):
     id: str
-    received_at: str  # timestamp validator?
+    received_at: str
     anonymous_id: str
     context_app_version: str
     context_device_ad_tracking_enabled: bool
@@ -26,9 +20,9 @@ class Log(BaseModel):
     context_timezone: str = None
     event: str
     event_text: str
-    original_timestamp: str  # timestamp validator? perhaps can just use type of datetime
-    sent_at: str  # timestamp validator?
-    timestamp: str  # timestamp validator?
+    original_timestamp: str
+    sent_at: str
+    timestamp: str
     user_id: int = None
     context_network_carrier: str
     context_device_token: str = None
@@ -36,13 +30,17 @@ class Log(BaseModel):
 
     @validator("received_at", "original_timestamp", "sent_at", "timestamp")
     def is_timestamp_format_valid(cls, timestamp: str) -> bool:
-        try:
-            datetime.datetime.strptime(date_text, "%Y-%m-%d %H:%M:%S.%f")
-        except ValueError:
-            # raise ValueError("Incorrect data format, should be YYYY-MM-DD")  #TODO: this could be logged
-            return False
-        return True
+        timestamp_format = "%Y-%m-%d %H:%M:%S.%f"
+        if "+" in timestamp:
+            timestamp_format = "%Y-%m-%dT%H:%M:%S.%f%z"
 
-# json.dumps(MainModel.schema(), indent=2)
-# OR
-# print(Log.schema_json(indent=2))
+        try:
+            datetime.strptime(timestamp, timestamp_format)
+        except ValueError:
+            logging.debug(e.json())
+            # raise ValueError(f"Incorrect data format, should be '{timestamp_format}'")  # perhaps this should be logged rather than raise exception
+        return timestamp
+
+    @staticmethod
+    def model_schema():
+        return json.dumps(LogModel.schema(), indent=4)
