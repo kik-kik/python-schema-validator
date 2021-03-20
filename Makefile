@@ -3,7 +3,7 @@ PYTESTFLAGS?=-m 'not integration'
 
 # Test commands
 test-black: # code formatter
-	black $(PY_PATHS)
+	black -l 80 $(PY_PATHS)
 
 test-mypy:  # typing check
 	mypy $(PY_PATHS)

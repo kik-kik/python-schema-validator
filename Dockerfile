@@ -1,4 +1,5 @@
-FROM python:3.10.0a6-buster
+# FROM python:3.10.0a6-buster
+FROM python:3.7-slim
 
 ENV PIP_ENV_VERSION=21.0.1
 WORKDIR /schema_validator
@@ -7,8 +8,8 @@ WORKDIR /schema_validator
 RUN python -m pip install --no-cache-dir --upgrade pip==${PIP_ENV_VERSION} \
     && python -m pip install --no-cache-dir poetry
 
-COPY pyproject.toml .
-RUN poetry install
-RUN poetry run pip install black isort mypy
+COPY requirements.txt .
+RUN python -m pip install --no-cache-dir -r ./requirements.txt \
+    && rm -rf ./requirements.txt
 
-ENTRYPOINT [ "poetry", "run", "python", "main.py" ]
+ENTRYPOINT [ "python", "main.py" ]
