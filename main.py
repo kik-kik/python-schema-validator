@@ -1,9 +1,8 @@
-from schema_validator.schema_validator import (
-    schema_validator,
-    schema_validator_validate_file,
-)
-from schema_validator.models.log_model import LogModel
 import os
+
+from schema_validator.models.log_model import LogModel
+from schema_validator.schema_validator import (schema_validator,
+                                               schema_validator_validate_file)
 
 
 def main(filename: str, show_model_schema: bool = False, error_log_file: str = None):

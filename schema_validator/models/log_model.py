@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, validator, json
+from pydantic import BaseModel, json, validator
 
 
 class LogModel(BaseModel):

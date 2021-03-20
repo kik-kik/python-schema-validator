@@ -9,6 +9,6 @@ RUN python -m pip install --no-cache-dir --upgrade pip==${PIP_ENV_VERSION} \
 
 COPY pyproject.toml .
 RUN poetry install
-RUN poetry run pip install black
+RUN poetry run pip install black isort
 
 ENTRYPOINT [ "poetry", "run", "python", "main.py" ]

@@ -1,9 +1,11 @@
-from schema_validator.models.log_model import LogModel
 import json
-from pydantic import ValidationError
 import logging
-from datetime import datetime, tzinfo, timezone
 from collections import defaultdict
+from datetime import datetime, timezone, tzinfo
+
+from pydantic import ValidationError
+
+from schema_validator.models.log_model import LogModel
 
 
 def schema_validator(line: str, error_log: str = None):
