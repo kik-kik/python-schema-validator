@@ -1,3 +1,5 @@
+[![Test](https://github.com/kik-kik/python-schema-validator/actions/workflows/test.yaml/badge.svg)](https://github.com/kik-kik/python-schema-validator/actions/workflows/test.yaml)
+
 # python-schema-validator
 
 ## Description
