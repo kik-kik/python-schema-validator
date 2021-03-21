@@ -1,7 +1,8 @@
+import json
 import logging
 from datetime import datetime
 
-from pydantic import BaseModel, json, validator
+from pydantic import BaseModel, validator  # pylint: disable=E0611
 
 
 class LogModel(BaseModel):
@@ -30,16 +31,17 @@ class LogModel(BaseModel):
     context_traits_taxfix_language: str
 
     @validator("received_at", "original_timestamp", "sent_at", "timestamp")
-    def is_timestamp_format_valid(cls, timestamp: str) -> bool:
+    def is_timestamp_format_valid(
+        cls, timestamp: str
+    ) -> bool:  # pylint: disable=E0213,R0201
         timestamp_format = "%Y-%m-%d %H:%M:%S.%f"
         if "+" in timestamp:
             timestamp_format = "%Y-%m-%dT%H:%M:%S.%f%z"
 
         try:
             datetime.strptime(timestamp, timestamp_format)
-        except ValueError as e:
-            logging.debug(e)
-            # raise ValueError(f"Incorrect data format, should be '{timestamp_format}'")  # perhaps this should be logged rather than raise exception
+        except ValueError as _error:
+            logging.debug(_error)
             return False
         return True
 

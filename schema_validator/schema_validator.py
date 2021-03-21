@@ -1,29 +1,24 @@
 import json
 import logging
 from collections import defaultdict
-from datetime import datetime, timezone, tzinfo
 
 from pydantic import ValidationError
 
 from schema_validator.models.log_model import LogModel
 
 
-def schema_validator(line: str, error_log: str = None) -> dict:
+def schema_validator(line: str) -> dict:
     line_dict: dict = json.loads(line)
 
     success: bool = True
 
     try:
         LogModel(**line_dict)
-    except ValidationError as e:
-        if error_log:
-            with open(error_log, "a+") as _error_log:
-                _error_log.write(line)
-
-        logging.error(line)
+    except ValidationError:
+        logging.error(line.rstrip("\n"))
         success = False
 
-    logging.info(line)
+    logging.info(line.rstrip("\n"))
 
     return {
         "date": line_dict["timestamp"].split(" ")[0].split("T")[0],
@@ -32,59 +27,57 @@ def schema_validator(line: str, error_log: str = None) -> dict:
     }
 
 
-def schema_validator_validate_file(
-    filename: str, error_log: str = None
-) -> dict:
-    # metrics: dict = defaultdict(lambda: defaultdict(int))
-    # events: dict = defaultdict(lambda: defaultdict(list))
-
-    report = dict()
+def schema_validator_validate_file(filename: str) -> dict:
+    report = dict()  # type: ignore
 
     with open(filename) as stream:
         for line in stream:
-            result: dict = schema_validator(line, error_log=error_log)
+            result: dict = schema_validator(line)
 
             try:
-                report[result['date']]
+                report[result["date"]]
             except KeyError:
-                report[result['date']] = dict()
+                report[result["date"]] = dict()
 
             try:
-                report[result['date']]['events']
+                report[result["date"]]["events"]
             except KeyError:
-                report[result['date']]['events'] = list()
+                report[result["date"]]["events"] = list()
 
             try:
-                report[result['date']]['success']
+                report[result["date"]]["success"]
             except KeyError:
-                report[result['date']]['success'] = 0
+                report[result["date"]]["success"] = 0
 
             try:
-                report[result['date']]['fail']
+                report[result["date"]]["fail"]
             except KeyError:
-                report[result['date']]['fail'] = 0
-            
-            report[result['date']]['events'].append(result['event'])
+                report[result["date"]]["fail"] = 0
 
-            if result['success']:
-                report[result['date']]['success'] += 1
+            report[result["date"]]["events"].append(result["event"])
+
+            if result["success"]:
+                report[result["date"]]["success"] += 1
             else:
-                report[result['date']]['fail'] += 1
+                report[result["date"]]["fail"] += 1
 
+    report_keys = report.keys()
 
-    for date in report.keys():
+    for key in report_keys:
         event_metrics = defaultdict(int)
 
-        for event in report[date]["events"]:
-            event_metrics[event] = report[date]["events"].count(event)
-        
-        try:
-            report[date]['event_metrics']
-        except KeyError:
-            report[date]['event_metrics'] = dict
-        
-        report[date]['event_metrics'] = event_metrics
+        for event in report[key]["events"]:
+            event_metrics[event] = report[key]["events"].count(event)
 
-        # report[result['date']]['events'] = list(set(report[result['date']]['events']))
+        try:
+            report[key]["event_metrics"]
+        except KeyError:
+            report[key]["event_metrics"] = dict
+
+        report[key]["event_metrics"] = event_metrics
+
+    for key in report_keys:
+        report[key]["events"] = list(set(report[key]["events"]))
+        report[key]["unique_events"] = report[key].pop("events")
 
     return report
