@@ -1,0 +1,8 @@
+# yamllint disable rule:document-start
+# CONFIG for schema_validator
+
+file_to_validate: schema_validator/tests/test_data/test_data.json
+log_file: log.json
+log_level: ERROR
+print_model_schema: false
+print_report: true
