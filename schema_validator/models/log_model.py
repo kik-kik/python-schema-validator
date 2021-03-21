@@ -31,9 +31,9 @@ class LogModel(BaseModel):
     context_traits_taxfix_language: str
 
     @validator("received_at", "original_timestamp", "sent_at", "timestamp")
-    def is_timestamp_format_valid(
+    def is_timestamp_format_valid(  # pylint: disable=E0213,R0201
         cls, timestamp: str
-    ) -> bool:  # pylint: disable=E0213,R0201
+    ) -> bool:
         timestamp_format = "%Y-%m-%d %H:%M:%S.%f"
         if "+" in timestamp:
             timestamp_format = "%Y-%m-%dT%H:%M:%S.%f%z"

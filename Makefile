@@ -32,6 +32,9 @@ test-black: # code formatter
 test-mypy:  # typing check
 	mypy $(PY_PATHS)
 
+test-pylint:
+	pylint --disable=C0114,C0115,C0116 $(PY_PATHS)
+
 test-unit:
 	pytest -vvv \
 		$(PY_PATHS) \
